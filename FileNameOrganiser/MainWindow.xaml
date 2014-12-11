@@ -1,8 +1,56 @@
 ﻿<Window x:Class="FileNameOrganiser.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525">
+        Title="FileNameOrganiser" Height="350" Width="525"
+        DataContext="{Binding Main, Source={StaticResource Locator}}">
     <Grid>
-        
+        <Grid.Resources>
+
+        </Grid.Resources>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="AUto" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" x:Name="OpenFolder">
+                <Image Source="/img/folder-open.png" />
+            </Button>
+            <ComboBox Grid.Column="1" IsEditable="True" />
+        </Grid>
+
+        <ListBox Grid.Row="1" BorderThickness="5" BorderBrush="Gray">
+
+        </ListBox>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" ToolTip="abc">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock>Sequence File Name</TextBlock>
+                    <Image Source="/img/tooltip.gif" />
+                </StackPanel>
+            </TextBlock>
+            <TextBox Grid.Column="1" />
+        </Grid>
+
+        <Button Grid.Row="3">Batch Rename Files</Button>
+
+        <TextBlock Grid.Row="4" Text="Logs" HorizontalAlignment="Left" Padding="0,10,0,0" />
+        <Border Grid.Row="5" BorderThickness="5" BorderBrush="Red">
+            <TextBlock MinHeight="100"></TextBlock>
+        </Border>
     </Grid>
 </Window>
