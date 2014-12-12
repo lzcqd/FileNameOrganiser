@@ -22,10 +22,10 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" x:Name="OpenFolder">
+            <Button Grid.Column="0" x:Name="OpenFolder" Command="{Binding FolderOpenClickCommand}">
                 <Image Source="/img/folder-open.png" />
             </Button>
-            <ComboBox Grid.Column="1" IsEditable="True" />
+            <ComboBox Grid.Column="1" IsEditable="True" ItemsSource="{Binding CachedPaths}" SelectedItem="{Binding SelectedPath}" />
         </Grid>
 
         <ListBox Grid.Row="1" BorderThickness="5" BorderBrush="Gray">
