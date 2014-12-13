@@ -6,6 +6,7 @@ using Ookii.Dialogs.Wpf;
 using System.Linq;
 using System.Windows;
 using System.IO;
+using System.Collections.Generic;
 
 namespace FileNameOrganiser.ViewModel
 {
@@ -103,21 +104,37 @@ namespace FileNameOrganiser.ViewModel
 
         protected void OnFilesDrop(IDataObject data)
         {
-            string[] droppedFiles = data.GetData(DataFormats.FileDrop, true) as string[];
+            FileInfo[] droppedFiles = GetDropFiles(data);
 
             if (droppedFiles == null || droppedFiles.Count() <= 0) return;
 
             foreach (var droppedFile in droppedFiles)
             {
-                FileInfo file = new FileInfo(droppedFile);
-                if (!Files.Any(f => f.FullName == file.FullName))
+                if (droppedFile.Exists && !Files.Any(f => f.FullName == droppedFile.FullName))
                 {
-                    Files.Add(file);
+                    Files.Add(droppedFile);
                 }
             }
+
+            if (Files.Count() <= 0) return;
             var dirPath = Files[0].Directory.FullName;
             AddToSelectedPaths(dirPath);
             SelectedPath = dirPath;
+        }
+
+        private FileInfo[] GetDropFiles(IDataObject data)
+        {
+            List<FileInfo> ret = new List<FileInfo>();
+            string[] droppedFiles = data.GetData(DataFormats.FileDrop, false) as string[];
+
+            if (droppedFiles == null || droppedFiles.Count() <= 0) return null;
+
+            foreach (var droppedFile in droppedFiles)
+            {
+                ret.Add(new FileInfo(droppedFile));
+            }
+
+            return ret.ToArray();
         }
     } 
 }
