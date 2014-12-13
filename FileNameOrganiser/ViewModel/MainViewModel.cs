@@ -4,6 +4,8 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using Ookii.Dialogs.Wpf;
 using System.Linq;
+using System.Windows;
+using System.IO;
 
 namespace FileNameOrganiser.ViewModel
 {
@@ -36,7 +38,9 @@ namespace FileNameOrganiser.ViewModel
             ////    // Code runs "for real"
             ////}
             FolderOpenClickCommand = new RelayCommand(OnFolderOpenClick);
+            FilesDropCommand = new RelayCommand<IDataObject>(OnFilesDrop);
             CachedPaths = new ObservableCollection<string>();
+            Files = new ObservableCollection<FileInfo>();
         }
 
         public RelayCommand FolderOpenClickCommand { get; private set; }
@@ -47,6 +51,7 @@ namespace FileNameOrganiser.ViewModel
             folderDialog.ShowDialog();
             AddToSelectedPaths(folderDialog.SelectedPath);
             SelectedPath = folderDialog.SelectedPath;
+            GetFiles(SelectedPath);
         }
 
         public ObservableCollection<string> CachedPaths { get; private set; }
@@ -79,5 +84,40 @@ namespace FileNameOrganiser.ViewModel
             }
         }
 
-    }
+
+        public ObservableCollection<FileInfo> Files { get; private set; }
+
+        protected void GetFiles(string selectedPath)
+        {
+            Files.Clear();
+            
+            DirectoryInfo dir = new DirectoryInfo(selectedPath);
+
+            foreach (var file in dir.GetFiles())
+            {
+                Files.Add(file);
+            }
+        }
+
+        public RelayCommand<IDataObject> FilesDropCommand { get; private set; }
+
+        protected void OnFilesDrop(IDataObject data)
+        {
+            string[] droppedFiles = data.GetData(DataFormats.FileDrop, true) as string[];
+
+            if (droppedFiles == null || droppedFiles.Count() <= 0) return;
+
+            foreach (var droppedFile in droppedFiles)
+            {
+                FileInfo file = new FileInfo(droppedFile);
+                if (!Files.Any(f => f.FullName == file.FullName))
+                {
+                    Files.Add(file);
+                }
+            }
+            var dirPath = Files[0].Directory.FullName;
+            AddToSelectedPaths(dirPath);
+            SelectedPath = dirPath;
+        }
+    } 
 }
