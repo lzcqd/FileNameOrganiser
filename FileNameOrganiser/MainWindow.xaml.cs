@@ -20,9 +20,52 @@ namespace FileNameOrganiser
     /// </summary>
     public partial class MainWindow : Window
     {
+        private Point _dragStartPos;
+
         public MainWindow()
         {
             InitializeComponent();
+            this.Loaded += MainWindow_Loaded;
+            IsDragging = false;
         }
+
+        void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            FilesList.PreviewMouseLeftButtonDown += FilesList_PreviewMouseLeftButtonDown;
+            FilesList.PreviewMouseMove += FilesList_PreviewMouseMove;
+            FilesList.PreviewMouseLeftButtonUp += FilesList_PreviewMouseLeftButtonUp;
+        }
+
+        void FilesList_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (IsDragging) IsDragging = false;
+        }
+
+        void FilesList_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed && !IsDragging)
+            {
+                Point dragCurrPos = e.GetPosition(null);
+
+                if ((Math.Abs(dragCurrPos.X - _dragStartPos.X) > SystemParameters.MinimumHorizontalDragDistance) &&
+                    (Math.Abs(dragCurrPos.Y - _dragStartPos.Y) > SystemParameters.MinimumVerticalDragDistance))
+                {
+                    StartDrag(e);
+                }
+            }
+        }
+
+        private void StartDrag(MouseEventArgs e)
+        {
+            IsDragging = true;
+            Console.WriteLine("Drag started.");
+        }
+
+        void FilesList_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            _dragStartPos = e.GetPosition(null);
+        }
+
+        public bool IsDragging { get; private set; }
     }
 }

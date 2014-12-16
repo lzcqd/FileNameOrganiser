@@ -136,5 +136,6 @@ namespace FileNameOrganiser.ViewModel
 
             return ret.ToArray();
         }
+
     } 
 }
