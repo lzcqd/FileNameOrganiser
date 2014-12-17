@@ -44,6 +44,12 @@
                     <i:EventTrigger EventName="Drop">
                         <mvvm:EventToCommand Command="{Binding FilesDropCommand, Mode=OneWay}" PassEventArgsToCommand="True" EventArgsConverter="{StaticResource DropEventArgsToDataConverter}" />
                     </i:EventTrigger>
+                    <i:EventTrigger EventName="DragOver">
+                        <mvvm:EventToCommand Command="{Binding DragOverCommand, Mode=OneWay}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="DragEnter">
+                        <mvvm:EventToCommand Command="{Binding DragEnterCommand, Mode=OneWay}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
                 </i:Interaction.Triggers>
             </ListBox>
         </Grid>

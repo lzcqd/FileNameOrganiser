@@ -25,6 +25,7 @@ namespace FileNameOrganiser.ViewModel
     public class MainViewModel : ViewModelBase
     {
         private int _capacity = 5;
+        private DragDropEffects _currEffect;
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
@@ -40,9 +41,16 @@ namespace FileNameOrganiser.ViewModel
             ////}
             FolderOpenClickCommand = new RelayCommand(OnFolderOpenClick);
             FilesDropCommand = new RelayCommand<IDataObject>(OnFilesDrop);
+            DragOverCommand = new RelayCommand<DragEventArgs>(e =>
+            {
+                e.Effects = _currEffect;
+                e.Handled = true;
+            });
+            DragEnterCommand = new RelayCommand<DragEventArgs>(OnDragEnter);
             CachedPaths = new ObservableCollection<string>();
             Files = new ObservableCollection<FileInfo>();
         }
+
 
         public RelayCommand FolderOpenClickCommand { get; private set; }
 
@@ -60,12 +68,12 @@ namespace FileNameOrganiser.ViewModel
         private void AddToSelectedPaths(string selectedPath)
         {
             if (CachedPaths.Contains(selectedPath)) return;
-            
+
             if (CachedPaths.Count >= _capacity)
             {
                 CachedPaths.RemoveAt(CachedPaths.Count - 1);
             }
-            
+
             CachedPaths.Insert(0, selectedPath);
         }
 
@@ -91,7 +99,7 @@ namespace FileNameOrganiser.ViewModel
         protected void GetFiles(string selectedPath)
         {
             Files.Clear();
-            
+
             DirectoryInfo dir = new DirectoryInfo(selectedPath);
 
             foreach (var file in dir.GetFiles())
@@ -125,6 +133,7 @@ namespace FileNameOrganiser.ViewModel
         private FileInfo[] GetDropFiles(IDataObject data)
         {
             List<FileInfo> ret = new List<FileInfo>();
+            
             string[] droppedFiles = data.GetData(DataFormats.FileDrop, false) as string[];
 
             if (droppedFiles == null || droppedFiles.Count() <= 0) return null;
@@ -137,5 +146,23 @@ namespace FileNameOrganiser.ViewModel
             return ret.ToArray();
         }
 
-    } 
+        public RelayCommand<DragEventArgs> DragOverCommand { get; private set; }
+
+        public RelayCommand<DragEventArgs> DragEnterCommand { get; private set; }
+
+        private void OnDragEnter(DragEventArgs e)
+        {
+            var draggedFiles = GetDropFiles(e.Data);
+
+            if (draggedFiles.Any(f => !f.Exists))
+            {
+                _currEffect = DragDropEffects.None;
+            }
+            else
+            {
+                _currEffect = DragDropEffects.Link;
+            }
+        }
+
+    }
 }
