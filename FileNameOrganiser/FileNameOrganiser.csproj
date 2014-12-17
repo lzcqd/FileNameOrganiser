@@ -93,8 +93,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Converters\DropEventArgsToDataConverter.cs" />
+    <Compile Include="Converters\DragEventArgsToDataConverter.cs" />
     <Compile Include="Converters\ItemCountToOpacityConverter.cs" />
+    <Compile Include="MouseAdorner.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="MainWindow.xaml">

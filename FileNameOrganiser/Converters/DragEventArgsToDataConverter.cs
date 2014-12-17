@@ -11,7 +11,7 @@ namespace FileNameOrganiser.Converters
     /// See http://www.galasoft.ch/mvvm
     /// </para>
     /// </summary>
-    public class DropEventArgsToDataConverter : IEventArgsConverter
+    public class DragEventArgsToDataConverter : IEventArgsConverter
     {
 
         public object Convert(object value, object parameter)

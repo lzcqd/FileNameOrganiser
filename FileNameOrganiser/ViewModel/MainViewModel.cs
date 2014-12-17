@@ -43,10 +43,11 @@ namespace FileNameOrganiser.ViewModel
             FilesDropCommand = new RelayCommand<IDataObject>(OnFilesDrop);
             DragOverCommand = new RelayCommand<DragEventArgs>(e =>
             {
+                if (!IsFileDrop(e.Data)) return;
                 e.Effects = _currEffect;
                 e.Handled = true;
             });
-            DragEnterCommand = new RelayCommand<DragEventArgs>(OnDragEnter);
+            DragEnterCommand = new RelayCommand<IDataObject>(OnDragEnter);
             CachedPaths = new ObservableCollection<string>();
             Files = new ObservableCollection<FileInfo>();
         }
@@ -112,6 +113,8 @@ namespace FileNameOrganiser.ViewModel
 
         protected void OnFilesDrop(IDataObject data)
         {
+            if (!IsFileDrop(data)) return;
+
             FileInfo[] droppedFiles = GetDropFiles(data);
 
             if (droppedFiles == null || droppedFiles.Count() <= 0) return;
@@ -148,13 +151,15 @@ namespace FileNameOrganiser.ViewModel
 
         public RelayCommand<DragEventArgs> DragOverCommand { get; private set; }
 
-        public RelayCommand<DragEventArgs> DragEnterCommand { get; private set; }
+        public RelayCommand<IDataObject> DragEnterCommand { get; private set; }
 
-        private void OnDragEnter(DragEventArgs e)
+        private void OnDragEnter(IDataObject data)
         {
-            var draggedFiles = GetDropFiles(e.Data);
+            if (!IsFileDrop(data)) return;
 
-            if (draggedFiles.Any(f => !f.Exists))
+            var draggedFiles = GetDropFiles(data);
+
+            if (draggedFiles != null && draggedFiles.Any(f => !f.Exists))
             {
                 _currEffect = DragDropEffects.None;
             }
@@ -162,6 +167,11 @@ namespace FileNameOrganiser.ViewModel
             {
                 _currEffect = DragDropEffects.Link;
             }
+        }
+
+        private bool IsFileDrop(IDataObject data)
+        {
+            return data.GetFormats().Contains(DataFormats.FileDrop);
         }
 
     }

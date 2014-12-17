@@ -43,7 +43,7 @@ namespace FileNameOrganiser
 
         void FilesList_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Pressed && !IsDragging)
+            if (e.LeftButton == MouseButtonState.Pressed && !IsDragging && FilesList.SelectedItem != null)
             {
                 Point dragCurrPos = e.GetPosition(null);
 
@@ -58,7 +58,9 @@ namespace FileNameOrganiser
         private void StartDrag(MouseEventArgs e)
         {
             IsDragging = true;
-            Console.WriteLine("Drag started.");
+            IDataObject data = new DataObject(FilesList.SelectedItem);
+            DragDropEffects de = DragDrop.DoDragDrop(this.FilesList, data, DragDropEffects.Move);
+            IsDragging = false;
         }
 
         void FilesList_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
