@@ -21,6 +21,8 @@ namespace FileNameOrganiser
     public partial class MainWindow : Window
     {
         private Point _dragStartPos;
+        private DragAdorner _adorner;
+        private AdornerLayer _layer;
 
         public MainWindow()
         {
@@ -58,9 +60,23 @@ namespace FileNameOrganiser
         private void StartDrag(MouseEventArgs e)
         {
             IsDragging = true;
+            FilesList.DragOver += FilesList_DragOver;
             IDataObject data = new DataObject(FilesList.SelectedItem);
+
+            _adorner = new DragAdorner(FilesList, (UIElement)e.OriginalSource, 0.8);
+            _layer = AdornerLayer.GetAdornerLayer(FilesList as Visual);
+            _layer.Add(_adorner);
+
             DragDropEffects de = DragDrop.DoDragDrop(this.FilesList, data, DragDropEffects.Move);
+            FilesList.DragOver -= FilesList_DragOver;
+            _layer.Remove(_adorner);
+            _adorner = null;
             IsDragging = false;
+        }
+
+        private void FilesList_DragOver(object sender, DragEventArgs e)
+        {
+            _adorner.UpdatePosition(e.GetPosition(FilesList));
         }
 
         void FilesList_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
