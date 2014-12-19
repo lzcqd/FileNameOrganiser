@@ -23,12 +23,14 @@ namespace FileNameOrganiser
         private Point _dragStartPos;
         private DragAdorner _adorner;
         private AdornerLayer _layer;
+        private ScrollViewer _scrollViewer;
 
         public MainWindow()
         {
             InitializeComponent();
             this.Loaded += MainWindow_Loaded;
             IsDragging = false;
+            
         }
 
         void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -36,6 +38,13 @@ namespace FileNameOrganiser
             FilesList.PreviewMouseLeftButtonDown += FilesList_PreviewMouseLeftButtonDown;
             FilesList.PreviewMouseMove += FilesList_PreviewMouseMove;
             FilesList.PreviewMouseLeftButtonUp += FilesList_PreviewMouseLeftButtonUp;
+            _scrollViewer = FilesList.FindVisualChild<ScrollViewer>();
+            _scrollViewer.MouseLeftButtonDown += _scrollViewer_MouseLeftButtonDown;
+        }
+
+        void _scrollViewer_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            FilesList.SelectedItem = null;
         }
 
         void FilesList_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -85,5 +94,31 @@ namespace FileNameOrganiser
         }
 
         public bool IsDragging { get; private set; }
+
+        
+    }
+
+    public static class Extensions
+    {
+        public static ChildItem FindVisualChild<ChildItem>(this DependencyObject root) where ChildItem : DependencyObject
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(root); i++)
+            {
+                var child = VisualTreeHelper.GetChild(root, i);
+                if (child != null && child is ChildItem)
+                {
+                    return child as ChildItem;
+                }
+                else
+                {
+                    var childOfChild = FindVisualChild<ChildItem>(child);
+                    if (childOfChild != null)
+                    {
+                        return childOfChild;
+                    }
+                }
+            }
+            return null;
+        }
     }
 }
