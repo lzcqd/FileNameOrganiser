@@ -11,7 +11,7 @@
             <dll:DragEventArgsToDataConverter x:Key="DragEventArgsToDataConverter" />
             <dll:ItemCountToOpacityConverter x:Key="ItemCountToOpacityConverter" />
             <DataTemplate x:Key="FileNameTemplate">
-                <TextBlock Text="{Binding Path=Name}" />
+                <TextBlock Text="{Binding Path=Name}"/>
             </DataTemplate>
         </Grid.Resources>
 
@@ -40,6 +40,12 @@
                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="30">+ Drop Files Here</TextBlock>    
             </Grid>
             <ListBox x:Name="FilesList" ItemsSource="{Binding Files}" ItemTemplate="{StaticResource FileNameTemplate}" AllowDrop="True" Opacity="{Binding Path=Files.Count, Converter={StaticResource ItemCountToOpacityConverter}}">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                        <Setter Property="AllowDrop" Value="True" />
+                        <EventSetter Event="Drop" Handler="FilesList_Drop" />
+                    </Style>
+                </ListBox.ItemContainerStyle>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Drop">
                         <mvvm:EventToCommand Command="{Binding FilesDropCommand, Mode=OneWay}" PassEventArgsToCommand="True" EventArgsConverter="{StaticResource DragEventArgsToDataConverter}" />

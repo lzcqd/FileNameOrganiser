@@ -28,6 +28,7 @@ namespace FileNameOrganiser
         {
             base.OnRender(drawingContext);
             var p = _location;
+            p.Offset(3, 3);
 
             drawingContext.DrawRectangle(_brush, null, new Rect(p, _size));
         }
