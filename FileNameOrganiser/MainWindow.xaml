@@ -4,6 +4,7 @@
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
         xmlns:dll="clr-namespace:FileNameOrganiser.Converters"
+        xmlns:customControl="clr-namespace:CustomControls;assembly=CustomControls"
         Title="FileNameOrganiser" Height="350" Width="525"
         DataContext="{Binding Main, Source={StaticResource Locator}}">
     <Grid x:Name="LayoutRoot">
@@ -39,13 +40,7 @@
             <Grid Background="LightGray" Opacity="0.5">
                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="30">+ Drop Files Here</TextBlock>    
             </Grid>
-            <ListBox x:Name="FilesList" ItemsSource="{Binding Files}" ItemTemplate="{StaticResource FileNameTemplate}" AllowDrop="True" Opacity="{Binding Path=Files.Count, Converter={StaticResource ItemCountToOpacityConverter}}">
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
-                        <Setter Property="AllowDrop" Value="True" />
-                        <EventSetter Event="Drop" Handler="FilesList_Drop" />
-                    </Style>
-                </ListBox.ItemContainerStyle>
+            <customControl:ReorderableListBox x:Name="FilesList" ItemsSource="{Binding Files}" ItemTemplate="{StaticResource FileNameTemplate}" AllowDrop="True" Opacity="{Binding Path=Files.Count, Converter={StaticResource ItemCountToOpacityConverter}}" ItemsReordered="FilesList_ItemsReordered">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Drop">
                         <mvvm:EventToCommand Command="{Binding FilesDropCommand, Mode=OneWay}" PassEventArgsToCommand="True" EventArgsConverter="{StaticResource DragEventArgsToDataConverter}" />
@@ -57,7 +52,7 @@
                         <mvvm:EventToCommand Command="{Binding DragEnterCommand, Mode=OneWay}" PassEventArgsToCommand="True" EventArgsConverter="{StaticResource DragEventArgsToDataConverter}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-            </ListBox>
+            </customControl:ReorderableListBox>
         </Grid>
 
         <Grid Grid.Row="2">
