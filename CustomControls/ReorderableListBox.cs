@@ -45,7 +45,7 @@ namespace CustomControls
 
         void ReorderableListBox_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            if (e.LeftButton != MouseButtonState.Pressed || !MovedEnoughDistance(e)) { return; }
+            if (e.LeftButton != MouseButtonState.Pressed || !MovedEnoughDistance(e) || DragItem ==null ) { return; }
             IsDragging = true;
             if (Overlay != null)
             {
@@ -71,13 +71,12 @@ namespace CustomControls
 
         void ReorderableListBox_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            if (!IsDragging) { return; }
             IsDragging = false;
-            if (Overlay != null)
-            {
-                AdornerLayer.Remove(Overlay);
-                Overlay = null;
-                base.RaiseEvent(new RoutedEventArgs(ItemsReorderedEvent, this));
-            }
+            DragItem == null;
+            AdornerLayer.Remove(Overlay);
+            Overlay = null;
+            base.RaiseEvent(new RoutedEventArgs(ItemsReorderedEvent, this));
         }
 
         private void ReorderableListBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)

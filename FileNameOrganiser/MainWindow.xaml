@@ -40,7 +40,10 @@
             <Grid Background="LightGray" Opacity="0.5">
                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="30">+ Drop Files Here</TextBlock>    
             </Grid>
-            <customControl:ReorderableListBox x:Name="FilesList" ItemsSource="{Binding Files}" ItemTemplate="{StaticResource FileNameTemplate}" AllowDrop="True" Opacity="{Binding Path=Files.Count, Converter={StaticResource ItemCountToOpacityConverter}}" ItemsReordered="FilesList_ItemsReordered">
+            <customControl:ReorderableListBox x:Name="FilesList" ItemsSource="{Binding Files}" ItemTemplate="{StaticResource FileNameTemplate}" 
+                                              AllowDrop="True" Opacity="{Binding Path=Files.Count, Converter={StaticResource ItemCountToOpacityConverter}}" 
+                                              ItemsReordered="FilesList_ItemsReordered"
+                                              SelectionMode="Single">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Drop">
                         <mvvm:EventToCommand Command="{Binding FilesDropCommand, Mode=OneWay}" PassEventArgsToCommand="True" EventArgsConverter="{StaticResource DragEventArgsToDataConverter}" />
