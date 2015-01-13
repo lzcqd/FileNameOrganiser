@@ -71,9 +71,9 @@ namespace CustomControls
 
         void ReorderableListBox_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (!IsDragging) { return; }
+            if (!IsDragging || Overlay == null) { return; }
             IsDragging = false;
-            DragItem == null;
+            DragItem = null;
             AdornerLayer.Remove(Overlay);
             Overlay = null;
             base.RaiseEvent(new RoutedEventArgs(ItemsReorderedEvent, this));
