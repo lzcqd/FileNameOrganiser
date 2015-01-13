@@ -31,6 +31,7 @@ namespace FileNameOrganiser
         private void FilesList_ItemsReordered(object sender, RoutedEventArgs e)
         {
             ((ObservableCollection<FileInfo>)FilesList.ItemsSource).Move(FilesList.OriginalItemIndex, FilesList.SelectedIndex);
+            FilesList.SelectedItem = null;
         }
 
     }
