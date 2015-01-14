@@ -38,7 +38,7 @@ namespace CustomControls
 
         void ReorderableListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (IsDragging) return;
+            if (DragItem != null) return;
             DragItem = this.SelectedItem;
             OriginalItemIndex = this.SelectedIndex;
         }
