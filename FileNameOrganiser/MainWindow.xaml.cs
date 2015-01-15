@@ -34,5 +34,11 @@ namespace FileNameOrganiser
             FilesList.SelectedItem = null;
         }
 
+        private void Delete_Click(object sender, RoutedEventArgs e)
+        {
+            if (FilesList.SelectedItem == null) return;
+            ((ObservableCollection<FileInfo>)FilesList.ItemsSource).Remove(FilesList.SelectedItem as FileInfo);
+        }
+
     }
 }

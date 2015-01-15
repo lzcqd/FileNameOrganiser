@@ -38,7 +38,7 @@
 
         <Grid Grid.Row="1">
             <Grid Background="LightGray" Opacity="0.5">
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="30">+ Drop Files Here</TextBlock>    
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="30">+ Drop Files Here</TextBlock>
             </Grid>
             <customControl:ReorderableListBox x:Name="FilesList" ItemsSource="{Binding Files}" ItemTemplate="{StaticResource FileNameTemplate}" 
                                               AllowDrop="True" Opacity="{Binding Path=Files.Count, Converter={StaticResource ItemCountToOpacityConverter}}" 
@@ -55,6 +55,11 @@
                         <mvvm:EventToCommand Command="{Binding DragEnterCommand, Mode=OneWay}" PassEventArgsToCommand="True" EventArgsConverter="{StaticResource DragEventArgsToDataConverter}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
+                <customControl:ReorderableListBox.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Delete" Click="Delete_Click"/>
+                    </ContextMenu>
+                </customControl:ReorderableListBox.ContextMenu>
             </customControl:ReorderableListBox>
         </Grid>
 
