@@ -43,7 +43,7 @@
             <customControl:ReorderableListBox x:Name="FilesList" ItemsSource="{Binding Files}" ItemTemplate="{StaticResource FileNameTemplate}" 
                                               AllowDrop="True" Opacity="{Binding Path=Files.Count, Converter={StaticResource ItemCountToOpacityConverter}}" 
                                               ItemsReordered="FilesList_ItemsReordered"
-                                              SelectionMode="Single">
+                                              SelectionMode="Single" MinHeight="100">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Drop">
                         <mvvm:EventToCommand Command="{Binding FilesDropCommand, Mode=OneWay}" PassEventArgsToCommand="True" EventArgsConverter="{StaticResource DragEventArgsToDataConverter}" />
@@ -74,14 +74,20 @@
                     <Image Source="/img/tooltip.gif" />
                 </StackPanel>
             </TextBlock>
-            <TextBox Grid.Column="1" />
+            <TextBox Grid.Column="1">
+                <TextBox.Text>
+                    <Binding Path="SequenceFileName" UpdateSourceTrigger="PropertyChanged" />                
+                </TextBox.Text>
+            </TextBox>
         </Grid>
 
-        <Button Grid.Row="3">Batch Rename Files</Button>
+        <Button Grid.Row="3" Command="{Binding RenameFileCommand}">Batch Rename Files</Button>
 
         <TextBlock Grid.Row="4" Text="Logs" HorizontalAlignment="Left" Padding="0,10,0,0" />
-        <Border Grid.Row="5" BorderThickness="5" BorderBrush="Red">
-            <TextBlock MinHeight="100"></TextBlock>
+        <Border Grid.Row="5">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ListView VirtualizingPanel.IsVirtualizing="True" ItemsSource="{Binding Logs}" MinHeight="100" MaxHeight="100"></ListView>
+            </ScrollViewer>
         </Border>
     </Grid>
 </Window>

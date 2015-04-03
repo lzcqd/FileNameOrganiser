@@ -26,6 +26,7 @@ namespace FileNameOrganiser.ViewModel
     {
         private int _capacity = 5;
         private DragDropEffects _currEffect;
+        private string _replaceStart = "$[", _replaceEnd = "]$";
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
@@ -39,6 +40,9 @@ namespace FileNameOrganiser.ViewModel
             ////{
             ////    // Code runs "for real"
             ////}
+            CachedPaths = new ObservableCollection<string>();
+            Files = new ObservableCollection<FileInfo>();
+            Logs = new ObservableCollection<string>();
             FolderOpenClickCommand = new RelayCommand(OnFolderOpenClick);
             FilesDropCommand = new RelayCommand<IDataObject>(OnFilesDrop);
             DragOverCommand = new RelayCommand<DragEventArgs>(e =>
@@ -48,8 +52,10 @@ namespace FileNameOrganiser.ViewModel
                 e.Handled = true;
             });
             DragEnterCommand = new RelayCommand<IDataObject>(OnDragEnter);
-            CachedPaths = new ObservableCollection<string>();
-            Files = new ObservableCollection<FileInfo>();
+            RenameFileCommand = new RelayCommand(OnRenameFileClick, 
+                () => 
+                    !string.IsNullOrWhiteSpace(SequenceFileName) && Files.Any());
+            Logs.Add("Initialized!");
         }
 
 
@@ -95,6 +101,22 @@ namespace FileNameOrganiser.ViewModel
         }
 
 
+        private string _sequenceFileName;
+        public string SequenceFileName
+        {
+            get
+            {
+                return _sequenceFileName;
+            }
+            set
+            {
+                if (_sequenceFileName == value) return;
+                _sequenceFileName = value;
+                RaisePropertyChanged(() => SequenceFileName);
+                RenameFileCommand.RaiseCanExecuteChanged();
+            }
+        }
+
         public ObservableCollection<FileInfo> Files { get; private set; }
 
         protected void GetFiles(string selectedPath)
@@ -107,6 +129,8 @@ namespace FileNameOrganiser.ViewModel
             {
                 Files.Add(file);
             }
+            
+            Logs.Add(String.Format("{0} files added.", Files.Count()));
         }
 
         public RelayCommand<IDataObject> FilesDropCommand { get; private set; }
@@ -131,6 +155,8 @@ namespace FileNameOrganiser.ViewModel
             var dirPath = Files[0].Directory.FullName;
             AddToSelectedPaths(dirPath);
             SelectedPath = dirPath;
+
+            Logs.Add(String.Format("{0} files added.", Files.Count()));
         }
 
         private FileInfo[] GetDropFiles(IDataObject data)
@@ -168,6 +194,47 @@ namespace FileNameOrganiser.ViewModel
                 _currEffect = DragDropEffects.Link;
             }
         }
+
+        public RelayCommand RenameFileCommand { get; private set; }
+
+        public void OnRenameFileClick()
+        {
+            Logs.Add("Start renaming...");
+            int currentCount = 1;
+            FileInfo preivousFile = null;
+            foreach (var file in Files.ToList())
+            {
+                int startIndex = SequenceFileName.IndexOf(_replaceStart) + _replaceStart.Count();
+                int endIndex = SequenceFileName.IndexOf(_replaceEnd);
+                
+                string dynamicString = SequenceFileName.Substring(startIndex, endIndex - startIndex);
+                int decimalLength = dynamicString.Count();
+
+                if (preivousFile != null && string.Equals(Path.GetFileNameWithoutExtension(preivousFile.Name),
+                    Path.GetFileNameWithoutExtension(file.Name), StringComparison.OrdinalIgnoreCase))
+                {
+                    currentCount--;
+                }
+
+                string newName = SequenceFileName.Replace(_replaceStart + dynamicString + _replaceEnd,
+                    currentCount.ToString("D" + decimalLength.ToString()));
+
+                Logs.Add(String.Format("Renaming {0} to {1}", file.Name, newName + file.Extension));
+
+                string newFilePath = Path.Combine(file.DirectoryName, newName + file.Extension);
+                File.Move(file.FullName, newFilePath);
+
+                Files.Remove(file);
+                Files.Add(new FileInfo(newFilePath));
+
+                preivousFile = file;
+                currentCount++;
+            }
+
+            Logs.Add("Done!");
+        }
+
+        public ObservableCollection<string> Logs { get; private set; }
 
         private bool IsFileDrop(IDataObject data)
         {
