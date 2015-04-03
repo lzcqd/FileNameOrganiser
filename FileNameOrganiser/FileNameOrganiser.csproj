@@ -95,7 +95,6 @@
     </ApplicationDefinition>
     <Compile Include="Converters\DragEventArgsToDataConverter.cs" />
     <Compile Include="Converters\ItemCountToOpacityConverter.cs" />
-    <Compile Include="Utilities\FileInfoExtensions.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="MainWindow.xaml">
@@ -162,7 +161,9 @@
   <ItemGroup>
     <Resource Include="img\tooltip.gif" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Utilities\" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CustomControls\CustomControls.csproj">
       <Project>{ec05e7f3-64c4-4c20-9c94-24db3886e2a6}</Project>
